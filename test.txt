@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building..."
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                echo "Testing..."
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                echo "Deploying..."
+            }
+        }
+        
+        stage('Manual Approval') {
+            steps {
+                script {
+                    def approvalResult = input(
+                        id: 'manual-approval',
+                        message: 'Do you approve this deployment?',
+                        parameters: [
+                            [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Approve?', name: 'approve']
+                        ]
+                    )
+                    
+                    if (approvalResult == true) {
+                        echo "Deployment approved."
+                    } else {
+                        error "Deployment not approved."
+                    }
+                }
+            }
+        }
+        
+        stage('Finalize') {
+            steps {
+                echo "Finalizing..."
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo "Pipeline completed."
+        }
+    }
+}
+
